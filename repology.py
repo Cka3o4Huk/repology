@@ -25,6 +25,8 @@ from repology.processor import *
 from repology.package import *
 from repology.nametransformer import NameTransformer
 
+from repology.processor.specdir import GenericSpecDirectoryProcessor
+
 REPOSITORIES = [
     { 'name': "FreeBSD", 'processor': FreeBSDIndexProcessor("freebsd.list",
         "http://www.FreeBSD.org/ports/INDEX-11.bz2"
@@ -70,6 +72,9 @@ REPOSITORIES = [
         "http://ftp.u-tx.net/archlinux/core/os/x86_64/core.db.tar.gz",
         "http://ftp.u-tx.net/archlinux/extra/os/x86_64/extra.db.tar.gz",
         "http://ftp.u-tx.net/archlinux/community/os/x86_64/community.db.tar.gz"
+    ) },
+    { 'name': "Sisyphus", 'processor': GenericSpecDirectoryProcessor("packages",
+        "sisyphus"
     ) },
 ]
 
