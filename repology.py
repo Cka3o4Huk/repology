@@ -72,6 +72,9 @@ REPOSITORIES = [
         "http://ftp.u-tx.net/archlinux/extra/os/x86_64/extra.db.tar.gz",
         "http://ftp.u-tx.net/archlinux/community/os/x86_64/community.db.tar.gz"
     ) },
+    { 'name': 'AUR3', 'processor': Aur3GitProcessor("aur3.dir",
+        "git://pkgbuild.com/aur-mirror.git"
+    ) },
 ]
 
 def MixRepositories(repositories, nametrans):

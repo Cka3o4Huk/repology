@@ -22,3 +22,4 @@ from .pkgsrc import PkgSrcPackagesSHA512Processor
 from .pkgsrc import PkgSrcReadmeAllProcessor
 from .openbsd import OpenBSDIndexProcessor
 from .arch import ArchDBProcessor
+from .arch import Aur3GitProcessor

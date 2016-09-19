@@ -18,6 +18,7 @@
 import os
 import subprocess
 import shutil
+import re
 from pkg_resources import parse_version
 
 from .common import RepositoryProcessor
@@ -92,6 +93,55 @@ class ArchDBProcessor(RepositoryProcessor):
                         pkg.maintainer = line
                     elif line.startswith('%') and line.endswith('%'):
                         tag = line[1:-1]
+
+                if pkg.name is not None and pkg.version is not None:
+                    result.append(pkg)
+
+        return result
+
+class Aur3GitProcessor(RepositoryProcessor):
+    def __init__(self, path, *sources):
+        self.path = path
+        self.sources = sources
+
+    def GetRepoType(self):
+        return 'arch'
+
+    def IsUpToDate(self):
+        return False
+
+    def Download(self, update = True):
+        if not os.path.isdir(self.path):
+            subprocess.check_call("git clone -q --depth=1 %s %s" % (self.source, self.path), shell = True)
+        # no updates, repo is frozen
+
+    def Parse(self):
+        result = []
+
+        for package in os.listdir(self.path):
+            if package.endswith("-git"):
+                continue
+
+            pkgbuild_path = os.path.join(self.path, package, "PKGBUILD")
+            if not os.path.isfile(pkgbuild_path):
+                continue
+
+            with open(pkgbuild_path, encoding='utf-8', errors='ignore') as file:
+                pkg = Package()
+
+                for line in file:
+                    line = line[:-1]
+
+                    if re.search('[$(){}\'"]', line): # XXX: new more clever sh parser
+                        continue
+
+                    if line.startswith("pkgname="):
+                        pkg.name = line[8:]
+                    elif line.startswith("pkgver="):
+                        pkg.fullversion = line[7:]
+                        pkg.version = pkg.fullversion
+                    elif line.startswith("pkgdesc="):
+                        pkg.comment = line[8:]
 
                 if pkg.name is not None and pkg.version is not None:
                     result.append(pkg)
